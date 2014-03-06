@@ -23,7 +23,7 @@ resize();
 // reset game img size for mobile now that we loaded
 $('#game img').css('height', '100%');
 
-var socket = io();
+var socket = io(config.io);
 socket.on('connect', function(){
   $('body').addClass('ready');
   $('.messages').empty();
