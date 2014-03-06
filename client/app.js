@@ -1,4 +1,4 @@
-/*global $,URL*/
+/*global $,URL,config*/
 
 /* dependencies */
 var io = require('socket.io-client');
