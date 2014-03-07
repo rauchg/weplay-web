@@ -13,7 +13,7 @@ Then run it with the following ENV vars:
 - `WEPLAY_IO_URL` - io server url (`http://localhost:3001`)
 - `WEPLAY_REDIS` - redis uri (`localhost:6379`)
 
-```
+```bash
 $ node index
 ```
 
