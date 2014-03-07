@@ -150,6 +150,10 @@ $('table.screen-keys td').mousedown(function() {
   }, 1000);
 });
 
+socket.on('connections', function(total){
+  $('.count').text(total);
+});
+
 socket.on('join', function(nick, loc){
   var p = $('<p>');
   p.append($('<span class="join-by">').text(nick));
