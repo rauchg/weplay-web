@@ -1,6 +1,7 @@
-/*global $,URL,config*/
+/*global URL,config*/
 
 /* dependencies */
+var $ = require('jquery');
 var io = require('socket.io-client');
 var blobToImage = require('./blob');
 
