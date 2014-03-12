@@ -7,7 +7,7 @@
     "debug": "0.7.4",
     "redis": "0.10.1",
     "mustache-express": "1.0.1",
-    "socket.io-client": "LearnBoost/socket.io-client#e92027",
+    "socket.io-client": "LearnBoost/socket.io-client#af2d92",
     "blob": "0.0.1",
     "jquery": "1.11.0"
   },
