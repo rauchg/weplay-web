@@ -13,10 +13,6 @@ process.title = 'weplay-web';
 app.listen(port);
 console.log('listening on *:' + port);
 
-if ('development' != process.env.NODE_ENV) {
-  app.use(express.basicAuth('a', 'b'));
-}
-
 app.engine('mustache', mustache());
 app.set('views', __dirname + '/views');
 
