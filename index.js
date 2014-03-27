@@ -42,3 +42,13 @@ app.get('/', function(req, res, next){
     });
   });
 });
+
+app.get('/screenshot.png', function(req, res, next) {
+  redis.get('weplay:frame', function(err, image){
+    if (err) return next(err);
+    res.writeHead(200, {
+      'Content-Type':'image/png',
+      'Content-Length': image.length});
+    res.end(image);
+  });
+});
