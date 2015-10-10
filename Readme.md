@@ -4,7 +4,7 @@
 ## How to install
 
 ```bash
-$ npm install
+$ npm install && make
 ```
 
 Then run it with the following ENV vars:
