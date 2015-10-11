@@ -1,6 +1,6 @@
 
 var redis = require('redis');
-var uri = process.env.WEPLAY_REDIS_URI || 'localhost:6379';
+var uri = process.env.WEPLAY_REDIS || 'localhost:6379';
 var pieces = uri.split(':');
 
 module.exports = function(){

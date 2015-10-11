@@ -4,7 +4,7 @@ var mustache = require('mustache-express');
 var express = require('express');
 var app = express();
 
-var port = process.env.WEPLAY_PORT || 3000;
+var port = process.env.WEPLAY_WEB_PORT || 3000;
 
 var redis = require('./redis')();
 
