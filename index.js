@@ -13,7 +13,7 @@ var siteurl = process.env.THIS_URL_PORT || 'http://localhost:3000';
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
-app.use('/main.js', browserify('./client/app.js'));
+app.use('/main.js', browserify(__dirname + '/client/app.js'));
 
 if ('development' == process.env.NODE_ENV) {
     app.use(function(req, res, next){
