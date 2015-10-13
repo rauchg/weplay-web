@@ -33,7 +33,8 @@ app.get('/', function(req, res, next){
         img: image.toString('base64'),
         iourl: iourl,
         connections: count,
-        siteurl: siteurl
+        siteurl: siteurl,
+        siteshot: siteurl + '/screenshot.png'
       });
     });
   });
