@@ -1,45 +1,39 @@
 
 var browserify = require('browserify-middleware');
-var mustache = require('mustache-express');
 var express = require('express');
-var app = express();
-
-var port = process.env.WEPLAY_WEB_PORT || 3000;
-
 var redis = require('./redis')();
 
 process.title = 'weplay-web';
+var app = express();
+var port = process.env.WEPLAY_WEB_PORT || 3000;
+var iourl = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
+var siteurl = process.env.THIS_URL_PORT || 'http://localhost:3000';
 
-app.listen(port);
-console.log('listening on *:' + port);
 
-app.engine('mustache', mustache());
+app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
 app.use(express.static(__dirname + '/public'));
+app.use('/main.js', browserify('./client/app.js'));
 
 if ('development' == process.env.NODE_ENV) {
-    app.use('/main.js', browserify('./client/app.js'));
-
     app.use(function(req, res, next){
         req.socket.on('error', function(err){
-        console.error(err.stack);
-    });
+            console.error(err.stack);
+        });
     next();
     });
 }
 
-var iourl = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
-var siteurl = process.env.THIS_URL_PORT || 'http://localhost:3000';
 app.get('/', function(req, res, next){
   redis.get('weplay:frame', function(err, image){
     if (err) return next(err);
     redis.get('weplay:connections-total', function(err, count){
       if (err) return next(err);
-      res.render('index.mustache', {
+      res.render('index.hbs', {
         img: image.toString('base64'),
-        io: iourl,
+        iourl: iourl,
         connections: count,
-        www: siteurl
+        siteurl: siteurl
       });
     });
   });
@@ -54,3 +48,6 @@ app.get('/screenshot.png', function(req, res, next) {
     res.end(image);
   });
 });
+
+app.listen(port);
+console.log('Server listening on *:' + port);
