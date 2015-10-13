@@ -15,20 +15,21 @@ console.log('listening on *:' + port);
 
 app.engine('mustache', mustache());
 app.set('views', __dirname + '/views');
-
-if ('development' == process.env.NODE_ENV) {
-  app.use('/main.js', browserify('./client/app.js'));
-}
 app.use(express.static(__dirname + '/public'));
 
-app.use(function(req, res, next){
-  req.socket.on('error', function(err){
-    console.error(err.stack);
-  });
-  next();
-});
+if ('development' == process.env.NODE_ENV) {
+    app.use('/main.js', browserify('./client/app.js'));
 
-var url = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
+    app.use(function(req, res, next){
+        req.socket.on('error', function(err){
+        console.error(err.stack);
+    });
+    next();
+    });
+}
+
+var iourl = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
+var siteurl = process.env.THIS_URL_PORT || 'http://localhost:3000';
 app.get('/', function(req, res, next){
   redis.get('weplay:frame', function(err, image){
     if (err) return next(err);
@@ -36,8 +37,9 @@ app.get('/', function(req, res, next){
       if (err) return next(err);
       res.render('index.mustache', {
         img: image.toString('base64'),
-        io: url,
-        connections: count
+        io: iourl,
+        connections: count,
+        www: siteurl
       });
     });
   });
