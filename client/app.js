@@ -1,7 +1,7 @@
-/*global URL,config*/
+/*global URL, config*/
 
 /* dependencies */
-var $ = require('jquery');
+// var $ = require('jquery'); Added manually
 var io = require('socket.io-client');
 var blobToImage = require('./blob');
 
@@ -17,6 +17,24 @@ function resize(){
     $('.messages').css('height', $('#chat').height() - 70);
   }
   scrollMessages();
+  $("#game").danmu({
+      height: $('#game').css('height'),  //弹幕区高度
+      width: $('#game').css('width'),   //弹幕区宽度
+      zindex :99999,   //弹幕区域z-index属性
+      speed:7000,      //滚动弹幕的默认速度，这是数值值得是弹幕滚过每672像素所需要的时间（毫秒）
+      sumTime:65535,   //弹幕流的总时间
+      danmuLoop:false,   //是否循环播放弹幕
+      defaultFontColor:"#000",   //弹幕的默认颜色
+      fontSizeSmall:40,     //小弹幕的字号大小
+      FontSizeBig:40,       //大弹幕的字号大小
+      opacity:"0.8",            //默认弹幕透明度
+      topBottonDanmuTime:6000,   // 顶部底部弹幕持续时间（毫秒）
+      SubtitleProtection:false,     //是否字幕保护
+      positionOptimize:false,         //是否位置优化，位置优化是指像AB站那样弹幕主要漂浮于区域上半部分
+
+      maxCountInScreen: 40,   //屏幕上的最大的显示弹幕数目,弹幕数量过多时,优先加载最新的。
+      maxCountPerSec: 10      //每分秒钟最多的弹幕数目,弹幕数量过多时,优先加载最新的。
+  });
 }
 $(window).resize(resize);
 resize();
@@ -41,7 +59,7 @@ socket.on('connect', function(){
 });
 
 socket.on('disconnect', function(){
-  message('Disconnected. Reconnecting.');
+  message('弹幕服务器已失联。。。试试看刷新页面吧！');
 });
 
 if ('ontouchstart' in window) {
@@ -57,6 +75,14 @@ $('.input form').submit(function(ev){
   if ('' === data) return;
   input.val('');
   if (joined) {
+      var text = 'bbq';
+        var text_obj='{ "text":"'+text+'","color":"'+'white'+'","size":"'+1+'","position":"'+0+'","isnew":""}';
+          var new_obj=eval('('+text_obj+')');
+
+    $("#game").danmu("addDanmu", new_obj);
+    $("#game").danmu("addDanmu", JSON.parse(composeDanmu(data)));
+    $("#game").danmu("addDanmu", { text:"这是滚动弹幕" ,color:"white",size:1,position:0,time:2});
+  console.log(composeDanmu(data));
     message(data, nick);
     socket.emit('message', data);
   } else {
@@ -90,17 +116,28 @@ input.blur(function(){
 
 socket.on('joined', function(){
   $('.messages').append(
-    $('<p>').text('You have joined.').append($('<span class="key-info"> Keys are as follows: </span>'))
+    $('<p>').text('Key binding:')
     .append(
     $('<table class="keys">').append(
-      $('<tr><td>left</td><td>←</td>'),
-      $('<tr><td>right</td><td>→</td>'),
-      $('<tr><td>up</td><td>↑</td>'),
-      $('<tr><td>down</td><td>↓</td>'),
-      $('<tr><td>A</td><td>a</td>'),
-      $('<tr><td>B</td><td>s</td>'),
-      $('<tr><td>select</td><td>o</td>'),
-      $('<tr><td>start</td><td>enter</td>')
+      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>Select</td></tr>'),
+      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>A</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>Start</td><td class="empty-cell"></td><td class="round">B</td></tr>')
+    ))
+    .append(
+        $('<span>').text('To:'))
+    .append(
+    $('<table class="keys">').append(
+      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;BackSpac&gt;</td></tr>'),
+      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;A&gt;</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;S&gt;</td></tr>')
+    ))
+    .append(
+        $('<span>').text('/ or:'))
+    .append(
+    $('<table class="keys">').append(
+      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;Delete&gt;</td></tr>'),
+      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;Z&gt;</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;X&gt;</td></tr>')
     ))
     .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves.</span><br> '
       + 'Input is throttled server side to prevent abuse. Catch \'em all!')
@@ -114,11 +151,14 @@ var map = {
   37: 'left',
   39: 'right',
   65: 'a',
+  90: 'a',
   83: 'b',
-  66: 'b',
+  88: 'b',
+  32: 'b',
   38: 'up',
   40: 'down',
-  79: 'select',
+  8: 'select',
+  46: 'select',
   13: 'start'
 };
 
@@ -175,13 +215,14 @@ socket.on('move', function(move, by){
 });
 
 socket.on('message', function(msg, by){
+  $("#game").danmu("addDanmu", JSON.parse(composeDanmu(msg)));
   message(msg, by);
 });
 
 socket.on('reload', function(){
   setTimeout(function(){
     location.reload();
-  }, Math.floor(Math.random() * 10000) + 5000);
+  }, Math.floor(Math.random() * 1000) + 2000);
 });
 
 function message(msg, by){
@@ -228,3 +269,14 @@ function highlightControls() {
 
 $('img').mousedown(highlightControls);
 $('table.screen-keys td').mousedown(highlightControls);
+
+$('#game').danmu('danmuStart');
+function composeDanmu (text) {
+    var struText = {};
+      struText ={ "text":text,"color":'white',"size":1,"position":0,"time":$('#game').data("nowTime"),"isnew":""};
+
+    return JSON.stringify(struText);
+}
+function addmyname () {$("#game").danmu("addDanmu", [JSON.parse(composeDanmu('djh'))])}
+// setInterval(addmyname, 86);
+
