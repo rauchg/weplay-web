@@ -9,6 +9,10 @@ var port = process.env.WEPLAY_WEB_PORT || 3000;
 var iourl = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
 var siteurl = process.env.THIS_URL_PORT || 'http://localhost:3000';
 
+// Trim double quotes
+var iourl = iourl.replace(/['"]+/g, '')
+var siteurl = siteurl.replace(/['"]+/g, '')
+
 
 app.set('view engine', 'hbs');
 app.set('views', __dirname + '/views');
