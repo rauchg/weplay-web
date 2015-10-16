@@ -228,6 +228,8 @@ socket.on('join', function(nick, loc){
 });
 
     keymap2zh = {
+        'select': '选择 按键',
+        'start': '开始 按键',
         'left': '左 按键',
         'right': '右 按键',
         'up': '上 按键',
