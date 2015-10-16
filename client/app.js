@@ -17,9 +17,32 @@ function resize(){
     $('.messages').css('height', $('#chat').height() - 70);
   }
   scrollMessages();
+}
+$('#layout-trigger').click(function () {
+    if ($('body').hasClass('danmu')) {
+    $('body').removeClass('danmu');
+    } else {
+    $('body').addClass('danmu');
+    }
+});
+
+    if ($('body').hasClass('danmu')) {
+      var gameTop = $(window).height()*0.05;  // margin-top: 7vh;
+      var gameLeft = $(window).width()*.275;     // width: 45%; text-align: center;
+      var gameWidth = $(window).width()*.45;     // width: 45%; text-align: center;
+      var gameHeight = gameWidth * 0.9;  // gameWidth:gameHeight = 10:9
+    } else {
+      var gameTop = $(window).height()*0;  // margin-top: 7vh;
+      var gameLeft = $(window).width()*0;     // width: 45%; text-align: center;
+      var gameWidth = $(window).width()*.50;     // width: 45%; text-align: center;
+      var gameHeight = $(window).height() ;  // gameWidth:gameHeight = 10:9
+    }
+
   $("#game").danmu({
-      height: $('#game').css('height'),  //弹幕区高度
-      width: $('#game').css('width'),   //弹幕区宽度
+      top: gameTop,
+      left: gameLeft,
+      height: gameHeight,  //弹幕区高度
+      width: gameWidth,   //弹幕区宽度
       zindex :99999,   //弹幕区域z-index属性
       speed:7000,      //滚动弹幕的默认速度，这是数值值得是弹幕滚过每672像素所需要的时间（毫秒）
       sumTime:65535,   //弹幕流的总时间
@@ -35,12 +58,10 @@ function resize(){
       maxCountInScreen: 40,   //屏幕上的最大的显示弹幕数目,弹幕数量过多时,优先加载最新的。
       maxCountPerSec: 10      //每分秒钟最多的弹幕数目,弹幕数量过多时,优先加载最新的。
   });
-}
 $(window).resize(resize);
 resize();
-
 // reset game img size for mobile now that we loaded
-$('#game img').css('height', '100%');
+ // $('#game img').css('height', '100%');
 
 var socket = io(config.io);
 socket.on('connect', function(){
@@ -101,7 +122,7 @@ function join(data){
   $('body').addClass('joined');
   $('.input').addClass('joined');
   input
-  .attr('placeholder', 'type in to chat')
+  .attr('placeholder', '吹比，吹比，我是吹X的小能手！')
   .blur();
   joined = true;
 }
@@ -119,25 +140,25 @@ socket.on('joined', function(){
     $('<p>').text('Key binding:')
     .append(
     $('<table class="keys">').append(
-      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>Select</td></tr>'),
-      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>A</td></tr>'),
-      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>Start</td><td class="empty-cell"></td><td class="round">B</td></tr>')
+      $('<tr><td class="empty-cell" ></td><td>⇧</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>Select</td></tr>'),
+      $('<tr><td>⇦</td><td class="empty-cell"></td><td>⇨</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>A</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>Start</td><td class="empty-cell"></td><td class="round">B</td></tr>')
     ))
     .append(
         $('<span>').text('To:'))
     .append(
     $('<table class="keys">').append(
-      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;BackSpac&gt;</td></tr>'),
+      $('<tr><td class="empty-cell" ></td><td>↑</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;BackSpac&gt;</td></tr>'),
       $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;A&gt;</td></tr>'),
-      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;S&gt;</td></tr>')
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;S&gt;</td></tr>')
     ))
     .append(
         $('<span>').text('/ or:'))
     .append(
     $('<table class="keys">').append(
-      $('<tr><td class="empty-cell" ></td><td>left</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;Delete&gt;</td></tr>'),
+      $('<tr><td class="empty-cell" ></td><td>↑</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;Delete&gt;</td></tr>'),
       $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;Z&gt;</td></tr>'),
-      $('<tr><td class="empty-cell"></td><td>left</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;X&gt;</td></tr>')
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;X&gt;</td></tr>')
     ))
     .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves.</span><br> '
       + 'Input is throttled server side to prevent abuse. Catch \'em all!')
@@ -206,13 +227,27 @@ socket.on('join', function(nick, loc){
   scrollMessages();
 });
 
+    keymap2zh = {
+        'left': '左 按键',
+        'right': '右 按键',
+        'up': '上 按键',
+        'down': '下 按键',
+        'a': 'A 按键',
+        'b': 'B 按键'
+    }
 socket.on('move', function(move, by){
-  var p = $('<p class="move">').text(' pressed ' + move);
-  p.prepend($('<span class="move-by">').text(by));
-  $('.messages').append(p);
-  trimMessages();
-  scrollMessages();
+    clearTimeout(window.IntervalHideMoveMsg)
+    $('#move-wrapper').css('visibility', 'visible');
+    $('#move-wrapper').text(by + ' 使用了: ' + keymap2zh[move] + '!');
+    window.IntervalHideMoveMsg = setTimeout(doHide, 1800);
 });
+
+function doHide() {
+    setTimeout(hideMoveMsg, 500);
+}
+function hideMoveMsg () {
+    $('#move-wrapper').css('visibility', 'hidden');
+}
 
 socket.on('message', function(msg, by){
   $("#game").danmu("addDanmu", JSON.parse(composeDanmu(msg)));
@@ -226,13 +261,18 @@ socket.on('reload', function(){
 });
 
 function message(msg, by){
-  var p = $('<p>').text(msg);
+  var p = $('<p id="last-message">').text(msg);
   if (by) {
     p.prepend($('<span class="message-by">').text(by + ': '));
   } else {
     p.addClass('server');
   }
-  $('.messages').append(p);
+  if ( $('#last-message').text() == by + ': ' + msg ) { // mark redundancy
+      // $('#last-message').text(msg + 'again'); // broken, redunce redundancy for now
+  } else {
+      $('#last-message').removeAttr("id");
+    $('.messages').append(p);
+  }
   trimMessages();
   scrollMessages();
 }
@@ -250,13 +290,21 @@ function scrollMessages(){
 
 var image = $('#game img')[0];
 var lastImage;
+window.framecount = 0;
 socket.on('frame', function(data){
   if (lastImage && 'undefined' != typeof URL) {
     URL.revokeObjectURL(lastImage);
   }
   image.src = blobToImage(data);
   lastImage = image.src;
+  ++window.framecount;
 });
+
+function countFPS () {
+  $('#fps').text(window.framecount);
+    window.framecount = 0;
+}
+var intervalFPSCount = setInterval(countFPS, 1000);
 
 // Highlights controls when image or button pressed
 function highlightControls() {
@@ -279,4 +327,3 @@ function composeDanmu (text) {
 }
 function addmyname () {$("#game").danmu("addDanmu", [JSON.parse(composeDanmu('djh'))])}
 // setInterval(addmyname, 86);
-

@@ -43,8 +43,33 @@ body.touch #game table.unjoined {
   width: 100%;
 }
 
+body.danmu #game {
+    width: 45%;
+    display: block;
+    float: none;
+    margin: auto;
+}
+body.danmu #chat {
+    width:50vw;
+    position: absolute;
+    bottom: 2vh;
+    left: 25vw;
+    display: block;
+}
+
+body.danmu > #chat .input input {
+    height: 10vh;
+    width: 100%;
+}
+
+body.danmu .messages {
+  visibility: hidden;
+}
+
 #chat {
-  position: relative;
+  position: absolute;
+  right:0;
+  top:0;
   float: right;
   width: 50%;
   background: rgb(25, 25, 25);
@@ -127,6 +152,20 @@ body.ready .connecting {
 body.ready .connected {
   display: block;
 }
+
+#move-wrapper {
+  background: rgba(0, 0, 0, .8);
+  font-size: 24px;
+  color: #333;
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  display: block;
+  font-weight: bold;
+  padding: 2px 4px;
+  color: #fff;
+}
+
 
 .count-wrapper {
   background: rgba(0, 0, 0, .8);

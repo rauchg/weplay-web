@@ -13,12 +13,16 @@
     <link rel="stylesheet" href="/app.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   </head>
+  <!--body class="danmu"-->
   <body>
     <div id="game">
       <img alt="game" src="data:image/png;base64,{{img}}" />
-      <i title="You can control the game with your keyboard" class="keyboard icon-keyboard-1">&nbsp;</i>
+      <i title="出现这个图标时，你可以用键盘控制游戏！" class="keyboard icon-keyboard-1">&nbsp;</i>
       <span class="count-wrapper">
         Online: <span class="count">{{connections}}</span>
+        &nbsp;&nbsp;FPS: <span class="count" id="fps"></span>
+      </span>
+      <span id="move-wrapper">
       </span>
       <table id="mov-keys" class="unjoined screen-keys">
         <tr>
@@ -48,7 +52,7 @@
       </div>
       <div class="input connecting">
         <form action="">
-          <input type="text" disabled placeholder="正在链接弹幕池..." />
+          <input type="text" disabled maxlength="140" placeholder="正在链接弹幕池..." />
         </form>
       </div>
     </div>
