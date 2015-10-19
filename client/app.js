@@ -5,38 +5,67 @@
 var io = require('socket.io-client');
 var blobToImage = require('./blob');
 
+if ($('body').hasClass('danmu')) {
+    var gameTop = $(window).height()*0.06;  // margin-top: 6vh;
+    var gameHeight = $(window).height() * 0.85;
+    var gameWidth = gameHeight / 9 * 10;     // gameWidth:gameHeight = 10:9
+    var gameLeft = ($(window).width() - gameWidth) / 2;     // width: 45%; text-align: center;
+} else {
+    var gameTop = $(window).height()*0;  // margin-top: 7vh;
+    var gameLeft = $(window).width()*0;     // width: 45%; text-align: center;
+    var gameWidth = $(window).width()*.50;     // width: 45%; text-align: center;
+    var gameHeight = $(window).height() ;  // gameWidth:gameHeight = 10:9
+}
+
 // resize asap before loading other stuff
 function resize(){
+  if ($('body').hasClass('danmu')) {
+      // Make #chat position absolute
+      $('#chat').css('width', gameWidth);
+      $('#chat').css('position', 'absolute');
+      $('#chat').css('bottom', '2vh');
+      $('#chat').css('left', gameLeft);
+      $('.input').css('left', $(window).width() * 0.03 - 5);
+
+      $('#game').css('top', gameTop);  // margin-top: 6vh;
+      $('#game').css('height', gameHeight);
+      $('#game').css('width', gameWidth);
+      $('#game').css('left', gameLeft);
+      $('#danmu-trig').css('bottom', '4vh');
+  } else {
   if ($(window).width() <= 500) {
     $('#chat, #game').css('height', $(window).height() / 2);
     $('.input input').css('width', $(window).width() - 40);
     $('.messages').css('height', $(window).height() / 2 - 70);
   } else {
     $('#chat, #game').css('height', $(window).height());
+    $('#game').css('top', 0);
+    $('#game').css('left', 0);
+    $('#game').css('width', $(window).width() / 2);
+    $('#chat').css('top', 0);
+    $('#chat').css('left', $(window).width() / 2);
     $('.input input').css('width', $('.input').width());
     $('.messages').css('height', $('#chat').height() - 70);
+    $('#danmu-trig').css('bottom', 0);
+  }
   }
   scrollMessages();
 }
-$('#layout-trigger').click(function () {
+$('#danmu-trig').click(function () {
     if ($('body').hasClass('danmu')) {
     $('body').removeClass('danmu');
     } else {
     $('body').addClass('danmu');
     }
+    resize();
 });
 
-    if ($('body').hasClass('danmu')) {
-      var gameTop = $(window).height()*0.05;  // margin-top: 7vh;
-      var gameLeft = $(window).width()*.275;     // width: 45%; text-align: center;
-      var gameWidth = $(window).width()*.45;     // width: 45%; text-align: center;
-      var gameHeight = gameWidth * 0.9;  // gameWidth:gameHeight = 10:9
-    } else {
-      var gameTop = $(window).height()*0;  // margin-top: 7vh;
-      var gameLeft = $(window).width()*0;     // width: 45%; text-align: center;
-      var gameWidth = $(window).width()*.50;     // width: 45%; text-align: center;
-      var gameHeight = $(window).height() ;  // gameWidth:gameHeight = 10:9
-    }
+
+$(window).resize(resize);
+resize();
+// reset game img size for mobile now that we loaded
+$('#game img').css('height', '100%');
+
 
   $("#game").danmu({
       top: gameTop,
@@ -58,10 +87,6 @@ $('#layout-trigger').click(function () {
       maxCountInScreen: 40,   //屏幕上的最大的显示弹幕数目,弹幕数量过多时,优先加载最新的。
       maxCountPerSec: 10      //每分秒钟最多的弹幕数目,弹幕数量过多时,优先加载最新的。
   });
-$(window).resize(resize);
-resize();
-// reset game img size for mobile now that we loaded
- // $('#game img').css('height', '100%');
 
 var socket = io(config.io);
 socket.on('connect', function(){
@@ -96,14 +121,10 @@ $('.input form').submit(function(ev){
   if ('' === data) return;
   input.val('');
   if (joined) {
-      var text = 'bbq';
-        var text_obj='{ "text":"'+text+'","color":"'+'white'+'","size":"'+1+'","position":"'+0+'","isnew":""}';
-          var new_obj=eval('('+text_obj+')');
+    var struText = '{ "text":"' + data + '","size":1,"position":0,"time":' + ($('#game').data("nowTime") + 1) + ',"isnew":"1"}';  // differ: isnew = 1
+    var new_obj=eval('('+struText+')');
 
     $("#game").danmu("addDanmu", new_obj);
-    $("#game").danmu("addDanmu", JSON.parse(composeDanmu(data)));
-    $("#game").danmu("addDanmu", { text:"这是滚动弹幕" ,color:"white",size:1,position:0,time:2});
-  console.log(composeDanmu(data));
     message(data, nick);
     socket.emit('message', data);
   } else {
@@ -122,7 +143,7 @@ function join(data){
   $('body').addClass('joined');
   $('.input').addClass('joined');
   input
-  .attr('placeholder', '吹比，吹比，我是吹X的小能手！')
+  .attr('placeholder', '吹比，吹比，我是吹13的小能手！')
   .blur();
   joined = true;
 }
@@ -252,14 +273,14 @@ function hideMoveMsg () {
 }
 
 socket.on('message', function(msg, by){
-  $("#game").danmu("addDanmu", JSON.parse(composeDanmu(msg)));
+  $("#game").danmu("addDanmu", JSON.parse(composeDanmu(msg)));  // All message history will flow on startup
   message(msg, by);
 });
 
 socket.on('reload', function(){
   setTimeout(function(){
     location.reload();
-  }, Math.floor(Math.random() * 1000) + 2000);
+  }, Math.floor(Math.random() * 1000) + 2000);  // reload within 3 seconds
 });
 
 function message(msg, by){
@@ -322,10 +343,6 @@ $('table.screen-keys td').mousedown(highlightControls);
 
 $('#game').danmu('danmuStart');
 function composeDanmu (text) {
-    var struText = {};
-      struText ={ "text":text,"color":'white',"size":1,"position":0,"time":$('#game').data("nowTime"),"isnew":""};
-
+    var struText ={ "text":text,"size":1,"position":0,"time":$('#game').data("nowTime") + 1,"isnew":""};
     return JSON.stringify(struText);
 }
-function addmyname () {$("#game").danmu("addDanmu", [JSON.parse(composeDanmu('djh'))])}
-// setInterval(addmyname, 86);

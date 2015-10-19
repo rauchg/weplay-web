@@ -13,8 +13,8 @@
     <link rel="stylesheet" href="/app.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   </head>
+  <body class="danmu">
   <!--body class="danmu"-->
-  <body>
     <div id="game">
       <img alt="game" src="data:image/png;base64,{{img}}" />
       <i title="出现这个图标时，你可以用键盘控制游戏！" class="keyboard icon-keyboard-1">&nbsp;</i>
@@ -50,8 +50,10 @@
     <div id="chat">
       <div class="connecting messages">
       </div>
+      <button type="button" id="danmu-trig">&lt;&lt;</button>
       <div class="input connecting">
         <form action="">
+            <!-- some trigger to danmu mode-->
           <input type="text" disabled maxlength="140" placeholder="正在链接弹幕池..." />
         </form>
       </div>
