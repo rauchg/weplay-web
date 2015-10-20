@@ -1,28 +1,92 @@
-/*global URL,config*/
+/*global URL, config*/
 
 /* dependencies */
-var $ = require('jquery');
+// var $ = require('jquery'); Added manually
 var io = require('socket.io-client');
 var blobToImage = require('./blob');
 
+if ($('body').hasClass('danmu')) {
+    var gameTop = $(window).height()*0.06;  // margin-top: 6vh;
+    var gameHeight = $(window).height() * 0.85;
+    var gameWidth = gameHeight / 9 * 10;     // gameWidth:gameHeight = 10:9
+    var gameLeft = ($(window).width() - gameWidth) / 2;     // width: 45%; text-align: center;
+} else {
+    var gameTop = $(window).height()*0;  // margin-top: 7vh;
+    var gameLeft = $(window).width()*0;     // width: 45%; text-align: center;
+    var gameWidth = $(window).width()*.50;     // width: 45%; text-align: center;
+    var gameHeight = $(window).height() ;  // gameWidth:gameHeight = 10:9
+}
+
 // resize asap before loading other stuff
 function resize(){
+  if ($('body').hasClass('danmu')) {
+      // Make #chat position absolute
+      $('#chat').css('width', gameWidth);
+      $('#chat').css('position', 'absolute');
+      $('#chat').css('bottom', '2vh');
+      $('#chat').css('left', gameLeft);
+      $('.input').css('left', $(window).width() * 0.03 - 5);
+
+      $('#game').css('top', gameTop);  // margin-top: 6vh;
+      $('#game').css('height', gameHeight);
+      $('#game').css('width', gameWidth);
+      $('#game').css('left', gameLeft);
+      $('#danmu-trig').css('bottom', '4vh');
+  } else {
   if ($(window).width() <= 500) {
     $('#chat, #game').css('height', $(window).height() / 2);
     $('.input input').css('width', $(window).width() - 40);
     $('.messages').css('height', $(window).height() / 2 - 70);
   } else {
     $('#chat, #game').css('height', $(window).height());
+    $('#game').css('top', 0);
+    $('#game').css('left', 0);
+    $('#game').css('width', $(window).width() / 2);
+    $('#chat').css('top', 0);
+    $('#chat').css('left', $(window).width() / 2);
     $('.input input').css('width', $('.input').width());
     $('.messages').css('height', $('#chat').height() - 70);
+    $('#danmu-trig').css('bottom', 0);
+  }
   }
   scrollMessages();
 }
+$('#danmu-trig').click(function () {
+    if ($('body').hasClass('danmu')) {
+    $('body').removeClass('danmu');
+    } else {
+    $('body').addClass('danmu');
+    }
+    resize();
+});
+
+
 $(window).resize(resize);
 resize();
-
 // reset game img size for mobile now that we loaded
 $('#game img').css('height', '100%');
+
+
+  $("#game").danmu({
+      top: gameTop,
+      left: gameLeft,
+      height: gameHeight,  //弹幕区高度
+      width: gameWidth,   //弹幕区宽度
+      zindex :99999,   //弹幕区域z-index属性
+      speed:7000,      //滚动弹幕的默认速度，这是数值值得是弹幕滚过每672像素所需要的时间（毫秒）
+      sumTime:65535,   //弹幕流的总时间
+      danmuLoop:false,   //是否循环播放弹幕
+      defaultFontColor:"#000",   //弹幕的默认颜色
+      fontSizeSmall:40,     //小弹幕的字号大小
+      FontSizeBig:40,       //大弹幕的字号大小
+      opacity:"0.8",            //默认弹幕透明度
+      topBottonDanmuTime:6000,   // 顶部底部弹幕持续时间（毫秒）
+      SubtitleProtection:false,     //是否字幕保护
+      positionOptimize:false,         //是否位置优化，位置优化是指像AB站那样弹幕主要漂浮于区域上半部分
+
+      maxCountInScreen: 40,   //屏幕上的最大的显示弹幕数目,弹幕数量过多时,优先加载最新的。
+      maxCountPerSec: 10      //每分秒钟最多的弹幕数目,弹幕数量过多时,优先加载最新的。
+  });
 
 var socket = io(config.io);
 socket.on('connect', function(){
@@ -41,7 +105,7 @@ socket.on('connect', function(){
 });
 
 socket.on('disconnect', function(){
-  message('Disconnected. Reconnecting.');
+  message('弹幕服务器已失联。。。试试看刷新页面吧！');
 });
 
 if ('ontouchstart' in window) {
@@ -57,6 +121,10 @@ $('.input form').submit(function(ev){
   if ('' === data) return;
   input.val('');
   if (joined) {
+    var struText = '{ "text":"' + data + '","size":1,"position":0,"time":' + ($('#game').data("nowTime") + 1) + ',"isnew":"1"}';  // differ: isnew = 1
+    var new_obj=eval('('+struText+')');
+
+    $("#game").danmu("addDanmu", new_obj);
     message(data, nick);
     socket.emit('message', data);
   } else {
@@ -75,7 +143,7 @@ function join(data){
   $('body').addClass('joined');
   $('.input').addClass('joined');
   input
-  .attr('placeholder', 'type in to chat')
+  .attr('placeholder', '吹比，吹比，我是吹13的小能手！')
   .blur();
   joined = true;
 }
@@ -90,17 +158,28 @@ input.blur(function(){
 
 socket.on('joined', function(){
   $('.messages').append(
-    $('<p>').text('You have joined.').append($('<span class="key-info"> Keys are as follows: </span>'))
+    $('<p>').text('Key binding:')
     .append(
     $('<table class="keys">').append(
-      $('<tr><td>left</td><td>←</td>'),
-      $('<tr><td>right</td><td>→</td>'),
-      $('<tr><td>up</td><td>↑</td>'),
-      $('<tr><td>down</td><td>↓</td>'),
-      $('<tr><td>A</td><td>a</td>'),
-      $('<tr><td>B</td><td>s</td>'),
-      $('<tr><td>select</td><td>o</td>'),
-      $('<tr><td>start</td><td>enter</td>')
+      $('<tr><td class="empty-cell" ></td><td>⇧</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>Select</td></tr>'),
+      $('<tr><td>⇦</td><td class="empty-cell"></td><td>⇨</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>A</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>Start</td><td class="empty-cell"></td><td class="round">B</td></tr>')
+    ))
+    .append(
+        $('<span>').text('To:'))
+    .append(
+    $('<table class="keys">').append(
+      $('<tr><td class="empty-cell" ></td><td>↑</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;BackSpac&gt;</td></tr>'),
+      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;A&gt;</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;S&gt;</td></tr>')
+    ))
+    .append(
+        $('<span>').text('/ or:'))
+    .append(
+    $('<table class="keys">').append(
+      $('<tr><td class="empty-cell" ></td><td>↑</td><td class="empty-cell" ></td>    <td class="empty-cell"></td><td>&lt;Delete&gt;</td></tr>'),
+      $('<tr><td>←</td><td class="empty-cell"></td><td>→</td>    <td class="empty-cell"></td><td class="pty-cell">&nbsp;</td><td>&lt;Z&gt;</td></tr>'),
+      $('<tr><td class="empty-cell"></td><td>↓</td><td class="empty-cell"></td>     <td class="empty-cell"></td><td>&lt;Enter&gt;</td><td class="empty-cell"></td><td class="round">&lt;X&gt;</td></tr>')
     ))
     .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves.</span><br> '
       + 'Input is throttled server side to prevent abuse. Catch \'em all!')
@@ -114,11 +193,14 @@ var map = {
   37: 'left',
   39: 'right',
   65: 'a',
+  90: 'a',
   83: 'b',
-  66: 'b',
+  88: 'b',
+  32: 'b',
   38: 'up',
   40: 'down',
-  79: 'select',
+  8: 'select',
+  46: 'select',
   13: 'start'
 };
 
@@ -166,32 +248,54 @@ socket.on('join', function(nick, loc){
   scrollMessages();
 });
 
+    keymap2zh = {
+        'select': '选择 按键',
+        'start': '开始 按键',
+        'left': '左 按键',
+        'right': '右 按键',
+        'up': '上 按键',
+        'down': '下 按键',
+        'a': 'A 按键',
+        'b': 'B 按键'
+    }
 socket.on('move', function(move, by){
-  var p = $('<p class="move">').text(' pressed ' + move);
-  p.prepend($('<span class="move-by">').text(by));
-  $('.messages').append(p);
-  trimMessages();
-  scrollMessages();
+    clearTimeout(window.IntervalHideMoveMsg)
+    $('#move-wrapper').css('visibility', 'visible');
+    $('#move-wrapper').text(by + ' 使用了: ' + keymap2zh[move] + '!');
+    window.IntervalHideMoveMsg = setTimeout(doHide, 1800);
 });
 
+function doHide() {
+    setTimeout(hideMoveMsg, 500);
+}
+function hideMoveMsg () {
+    $('#move-wrapper').css('visibility', 'hidden');
+}
+
 socket.on('message', function(msg, by){
+  $("#game").danmu("addDanmu", JSON.parse(composeDanmu(msg)));  // All message history will flow on startup
   message(msg, by);
 });
 
 socket.on('reload', function(){
   setTimeout(function(){
     location.reload();
-  }, Math.floor(Math.random() * 10000) + 5000);
+  }, Math.floor(Math.random() * 1000) + 2000);  // reload within 3 seconds
 });
 
 function message(msg, by){
-  var p = $('<p>').text(msg);
+  var p = $('<p id="last-message">').text(msg);
   if (by) {
     p.prepend($('<span class="message-by">').text(by + ': '));
   } else {
     p.addClass('server');
   }
-  $('.messages').append(p);
+  if ( $('#last-message').text() == by + ': ' + msg ) { // mark redundancy
+      // $('#last-message').text(msg + 'again'); // broken, redunce redundancy for now
+  } else {
+      $('#last-message').removeAttr("id");
+    $('.messages').append(p);
+  }
   trimMessages();
   scrollMessages();
 }
@@ -209,13 +313,21 @@ function scrollMessages(){
 
 var image = $('#game img')[0];
 var lastImage;
+window.framecount = 0;
 socket.on('frame', function(data){
   if (lastImage && 'undefined' != typeof URL) {
     URL.revokeObjectURL(lastImage);
   }
   image.src = blobToImage(data);
   lastImage = image.src;
+  ++window.framecount;
 });
+
+function countFPS () {
+  $('#fps').text(window.framecount);
+    window.framecount = 0;
+}
+var intervalFPSCount = setInterval(countFPS, 1000);
 
 // Highlights controls when image or button pressed
 function highlightControls() {
@@ -228,3 +340,9 @@ function highlightControls() {
 
 $('img').mousedown(highlightControls);
 $('table.screen-keys td').mousedown(highlightControls);
+
+$('#game').danmu('danmuStart');
+function composeDanmu (text) {
+    var struText ={ "text":text,"size":1,"position":0,"time":$('#game').data("nowTime") + 1,"isnew":""};
+    return JSON.stringify(struText);
+}

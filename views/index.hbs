@@ -3,23 +3,26 @@
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <meta property="og:title" content="weplay - collaborative Pokemon with Socket.IO"/>
+    <meta property="og:title" content="开玩吧(ノﾟ∀ﾟ)ノ - 在线协作式GB/GBC友尽掀桌模拟器"/>
     <meta property="og:type" content="website"/>
-    <meta property="og:image" content="http://weplay.io/screenshot.png"/>
-    <meta property="og:url" content="http://weplay.io/"/>
-    <meta property="og:site-name" content="weplay"/>
-    <meta property="fb:admins" content="686296795"/>
-    <title>weplay – collaborative pokemon yellow</title>
+    <meta property="og:image" content={{{siteshot}}}/>
+    <meta property="og:url" content={{{siteurl}}}/>
+    <meta property="og:site-name" content="开玩吧(ノﾟ∀ﾟ)ノ"/>
+    <title>开玩吧(ノﾟ∀ﾟ)ノ ┴─┴ 在线协作式GB友尽掀桌模拟器</title>
     <link rel="stylesheet" href="/fonts.css" type="text/css" media="screen" charset="utf-8" />
     <link rel="stylesheet" href="/app.css" type="text/css" media="screen" charset="utf-8" />
-    <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
   </head>
-  <body>
+  <body class="danmu">
+  <!--body class="danmu"-->
     <div id="game">
       <img alt="game" src="data:image/png;base64,{{img}}" />
-      <i title="You can control the game with your keyboard" class="keyboard icon-keyboard-1">&nbsp;</i>
+      <i title="出现这个图标时，你可以用键盘控制游戏！" class="keyboard icon-keyboard-1">&nbsp;</i>
       <span class="count-wrapper">
         Online: <span class="count">{{connections}}</span>
+        &nbsp;&nbsp;FPS: <span class="count" id="fps"></span>
+      </span>
+      <span id="move-wrapper" style="visibility: hidden;">
       </span>
       <table id="mov-keys" class="unjoined screen-keys">
         <tr>
@@ -47,17 +50,21 @@
     <div id="chat">
       <div class="connecting messages">
       </div>
+      <button type="button" id="danmu-trig">&lt;&lt;</button>
       <div class="input connecting">
         <form action="">
-          <input type="text" disabled placeholder="connecting..." />
+            <!-- some trigger to danmu mode-->
+          <input type="text" disabled maxlength="140" placeholder="正在链接弹幕池..." />
         </form>
       </div>
     </div>
 
     <script>
       config = {};
-      config.io = "{{{io}}}";
+      config.io = '{{{iourl}}}';
     </script>
+    <script src="/jquery.min.js"></script>
+    <script src="/jquery.danmu.min.js"></script>
     <script src="/main.js"></script>
   </body>
 </html>
