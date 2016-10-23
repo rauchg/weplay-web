@@ -141,6 +141,19 @@ body.ready .connected {
   color: #fff;
 }
 
+.fps-wrapper {
+  background: rgba(0, 0, 0, .8);
+  font-size: 14px;
+  color: #333;
+  position: absolute;
+  top: 40px;
+  left: 10px;
+  display: block;
+  font-weight: bold;
+  padding: 2px 4px;
+  color: #fff;
+}
+
 .keyboard {
   display: none;
 }

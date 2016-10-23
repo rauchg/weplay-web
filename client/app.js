@@ -5,6 +5,14 @@ var $ = require('jquery');
 var io = require('socket.io-client');
 var blobToImage = require('./blob');
 
+var fps = require('fps');
+var ticker = fps({
+  every: 10   // update every 10 frames
+});
+ticker.on('data', function (framerate) {
+  $('.fps').text(Math.round(framerate));
+});
+
 // resize asap before loading other stuff
 function resize(){
   if ($(window).width() <= 500) {
@@ -212,6 +220,7 @@ function scrollMessages(){
 var image = $('#game img')[0];
 var lastImage;
 socket.on('frame', function(data){
+  ticker.tick();
   if (lastImage && 'undefined' != typeof URL) {
     URL.revokeObjectURL(lastImage);
   }
