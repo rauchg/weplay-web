@@ -102,7 +102,9 @@ socket.on('joined', function(){
       $('<tr><td>select</td><td>o</td>'),
       $('<tr><td>start</td><td>enter</td>')
     ))
-    .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves.</span><br> '
+
+        .append( '<br><span class="key-info">Chat text containing [ up | down | left | right | a | b | select | start]  is parsed as commands.</span><br>')
+    .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves with keys.</span><br> '
       + 'Input is throttled server side to prevent abuse. Catch \'em all!')
   );
 

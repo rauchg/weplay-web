@@ -28,6 +28,7 @@ app.use(function (req, res, next) {
 });
 
 var url = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
+
 app.get('/', function (req, res, next) {
     redis.get('weplay:frame', function (err, image) {
         if (err) return next(err);
