@@ -1,15 +1,15 @@
-var redis = require('redis');
-var uri = process.env.WEPLAY_REDIS_URI || 'localhost:6379';
-var pieces = uri.split(':');
+import redis from 'redis';
+const uri = process.env.WEPLAY_REDIS_URI || 'localhost:6379';
+const pieces = uri.split(':');
 
-module.exports = function () {
-  var host = pieces[0];
-  var port = pieces[1] || 6379;
-  var redisClient = redis.createClient(port, host, {return_buffers: true})
-  redisClient.on('connect', function () {
-    console.log('Redis connected to ' + host + ':' + port);
+export default () => {
+  const host = pieces[0];
+  const port = pieces[1] || 6379;
+  const redisClient = redis.createClient(port, host, {return_buffers: true});
+  redisClient.on('connect', () => {
+    console.log(`Redis connected to ${host}:${port}`);
   });
-  redisClient.on('error', function (err) {
+  redisClient.on('error', err => {
     console.error('Redis error ', err);
   });
   return redisClient;

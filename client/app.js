@@ -1,15 +1,15 @@
 /*global URL,config*/
 
 /* dependencies */
-var $ = require('jquery');
-var io = require('socket.io-client');
-var blobToImage = require('./blob');
+import $ from 'jquery';
 
-var fps = require('fps');
-var ticker = fps({
+import io from 'socket.io-client';
+import blobToImage from './blob';
+import fps from 'fps';
+const ticker = fps({
   every: 10   // update every 10 frames
 });
-ticker.on('data', function (framerate) {
+ticker.on('data', framerate => {
   $('.fps').text(Math.round(framerate));
 });
 
@@ -32,8 +32,8 @@ resize();
 // reset game img size for mobile now that we loaded
 $('#game img').css('height', '100%');
 
-var socket = io(config.io);
-socket.on('connect', function(){
+const socket = io(config.io);
+socket.on('connect', () => {
   $('body').addClass('ready');
   $('.messages').empty();
   $('.messages').removeClass('connecting');
@@ -48,7 +48,7 @@ socket.on('connect', function(){
   }
 });
 
-socket.on('disconnect', function(){
+socket.on('disconnect', () => {
   message('Disconnected. Reconnecting.');
 });
 
@@ -56,12 +56,12 @@ if ('ontouchstart' in window) {
   $('body').addClass('touch');
 }
 
-var joined = false;
-var input = $('.input input');
-var nick;
-$('.input form').submit(function(ev){
+let joined = false;
+const input = $('.input input');
+let nick;
+$('.input form').submit(ev => {
   ev.preventDefault();
-  var data = input.val();
+  const data = input.val();
   if ('' === data) return;
   input.val('');
   if (joined) {
@@ -83,44 +83,44 @@ function join(data){
   $('body').addClass('joined');
   $('.input').addClass('joined');
   input
-  .attr('placeholder', 'type in to chat')
-  .blur();
+      .attr('placeholder', 'type in to chat')
+      .blur();
   joined = true;
 }
 
-input.focus(function(){
+input.focus(() => {
   $('body').addClass('input_focus');
 });
 
-input.blur(function(){
+input.blur(() => {
   $('body').removeClass('input_focus');
 });
 
-socket.on('joined', function(){
+socket.on('joined', () => {
   $('.messages').append(
-    $('<p>').text('You have joined.').append($('<span class="key-info"> Keys are as follows: </span>'))
-    .append(
-    $('<table class="keys">').append(
-      $('<tr><td>left</td><td>←</td>'),
-      $('<tr><td>right</td><td>→</td>'),
-      $('<tr><td>up</td><td>↑</td>'),
-      $('<tr><td>down</td><td>↓</td>'),
-      $('<tr><td>A</td><td>a</td>'),
-      $('<tr><td>B</td><td>s</td>'),
-      $('<tr><td>select</td><td>o</td>'),
-      $('<tr><td>start</td><td>enter</td>')
-    ))
+      $('<p>').text('You have joined.').append($('<span class="key-info"> Keys are as follows: </span>'))
+          .append(
+              $('<table class="keys">').append(
+                  $('<tr><td>left</td><td>←</td>'),
+                  $('<tr><td>right</td><td>→</td>'),
+                  $('<tr><td>up</td><td>↑</td>'),
+                  $('<tr><td>down</td><td>↓</td>'),
+                  $('<tr><td>A</td><td>a</td>'),
+                  $('<tr><td>B</td><td>s</td>'),
+                  $('<tr><td>select</td><td>o</td>'),
+                  $('<tr><td>start</td><td>enter</td>')
+              ))
 
-        .append( '<br><span class="key-info">Chat text containing [ up | down | left | right | a | b | select | start]  is parsed as commands.</span><br>')
-    .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves with keys.</span><br> '
-      + 'Input is throttled server side to prevent abuse. Catch \'em all!')
+          .append( '<br><span class="key-info">Chat text containing [ up | down | left | right | a | b | select | start]  is parsed as commands.</span><br>')
+          .append('<br><span class="key-info">Make sure the chat input is not focused to perform moves with keys.</span><br> '
+              + 'Input is throttled server side to prevent abuse. Catch \'em all!')
   );
 
   $('table.unjoined').removeClass('unjoined');
   scrollMessages();
 });
 
-var map = {
+const map = {
   37: 'left',
   39: 'right',
   65: 'a',
@@ -132,12 +132,12 @@ var map = {
   13: 'start'
 };
 
-var reverseMap = {};
-for (var i in map) reverseMap[map[i]] = i;
+const reverseMap = {};
+for (const i in map) reverseMap[map[i]] = i;
 
-$(document).on('keydown', function(ev){
+$(document).on('keydown', ev => {
   if (null == nick) return;
-  var code = ev.keyCode;
+  const code = ev.keyCode;
   if ($('body').hasClass('input_focus')) return;
   if (map[code]) {
     ev.preventDefault();
@@ -147,28 +147,28 @@ $(document).on('keydown', function(ev){
 
 // Listener to fire up keyboard events on mobile devices for control overlay
 $('table.screen-keys td').mousedown(function() {
-  var id = $(this).attr('id');
-  var code = reverseMap[id];
-  var e = $.Event('keydown');
+  const id = $(this).attr('id');
+  const code = reverseMap[id];
+  const e = $.Event('keydown');
   e.keyCode = code;
   $(document).trigger(e);
 
   $(this).addClass('pressed');
-  var self = this;
-  setTimeout(function() {
+  const self = this;
+  setTimeout(() => {
     $(self).removeClass('pressed');
   }, 1000);
 });
 
-socket.on('connections', function(total){
+socket.on('connections', total => {
   $('.count').text(total);
 });
 
-socket.on('join', function(nick, loc){
-  var p = $('<p>');
+socket.on('join', (nick, loc) => {
+  const p = $('<p>');
   p.append($('<span class="join-by">').text(nick));
   if (loc) {
-    p.append(' (' + loc + ')');
+    p.append(` (${loc})`);
   }
   p.append(' joined.');
   $('.messages').append(p);
@@ -176,28 +176,28 @@ socket.on('join', function(nick, loc){
   scrollMessages();
 });
 
-socket.on('move', function(move, by){
-  var p = $('<p class="move">').text(' pressed ' + move);
+socket.on('move', (move, by) => {
+  const p = $('<p class="move">').text(` pressed ${move}`);
   p.prepend($('<span class="move-by">').text(by));
   $('.messages').append(p);
   trimMessages();
   scrollMessages();
 });
 
-socket.on('message', function(msg, by){
+socket.on('message', (msg, by) => {
   message(msg, by);
 });
 
-socket.on('reload', function(){
-  setTimeout(function(){
+socket.on('reload', () => {
+  setTimeout(() => {
     location.reload();
   }, Math.floor(Math.random() * 10000) + 5000);
 });
 
 function message(msg, by){
-  var p = $('<p>').text(msg);
+  const p = $('<p>').text(msg);
   if (by) {
-    p.prepend($('<span class="message-by">').text(by + ': '));
+    p.prepend($('<span class="message-by">').text(`${by}: `));
   } else {
     p.addClass('server');
   }
@@ -207,7 +207,7 @@ function message(msg, by){
 }
 
 function trimMessages(){
-  var messages = $('.messages');
+  const messages = $('.messages');
   while (messages.children().length > 300) {
     $(messages.children()[0]).remove();
   }
@@ -217,14 +217,18 @@ function scrollMessages(){
   $('.messages')[0].scrollTop = 10000000;
 }
 
-var image = $('#game img')[0];
-var lastImage;
-socket.on('frame', function(data){
+const image = $('#game img')[0];
+
+
+let lastImage;
+socket.on('frame', data => {
   ticker.tick();
   if (lastImage && 'undefined' != typeof URL) {
     URL.revokeObjectURL(lastImage);
   }
+
   image.src = blobToImage(data);
+
   lastImage = image.src;
 });
 
@@ -232,7 +236,7 @@ socket.on('frame', function(data){
 function highlightControls() {
   $('table.screen-keys td:not(.empty-cell)').addClass('highlight');
 
-  setTimeout(function() {
+  setTimeout(() => {
     $('table.screen-keys td').removeClass('highlight');
   }, 300);
 }
