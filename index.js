@@ -1,13 +1,12 @@
-import mustache from 'mustache-express';
-import express from 'express';
+const mustache = require('mustache-express');
+const express = require('express');
 const app = express();
 
-import webpack from 'webpack';
-import webpackConfig from './webpack.config.dev';
+const webpack = require('webpack');
+const webpackConfig  = require('./webpack.config.dev');
 const port = process.env.WEPLAY_PORT || 3000;
 
-import Redis from './redis';
-const redis = Redis();
+const redis = require('./redis')();
 
 process.title = 'weplay-web';
 

@@ -25,7 +25,7 @@
     "webpack-hot-middleware": "^2.13.1"
   },
   "scripts": {
-    "start": "babel-node index.js",
+    "start": "node index.js",
     "build": "NODE_ENV=production webpack --config ./webpack.config.prod.js"
   },
   "engines": {
