@@ -3,15 +3,17 @@ const express = require('express');
 const app = express();
 
 const webpack = require('webpack');
-const webpackConfig  = require('./webpack.config.dev');
+const webpackConfig = require('./webpack.config.dev');
 const port = process.env.WEPLAY_PORT || 3000;
 
-const redis = require('./redis')();
+const redis = require('weplay-common').redis();
+
+const logger = require('weplay-common').logger('weplay-web');
 
 process.title = 'weplay-web';
 
 app.listen(port);
-console.log(`listening on *:${port}`);
+logger.info(`listening on *:${port}`);
 
 app.engine('mustache', mustache());
 app.set('views', `${__dirname}/views`);
@@ -30,7 +32,7 @@ app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
     req.socket.on('error', err => {
-        console.error(err.stack);
+        logger.error(err.stack);
     });
     next();
 });
@@ -42,7 +44,7 @@ app.get('/', (req, res, next) => {
         if (err) return next(err);
         redis.get('weplay:connections-total', (err, count) => {
             if (err) return next(err);
-            console.log(`io url config${url}`);
+            logger.info('io url config', {url: url});
             res.render('index.mustache', {
                 img: image.toString('base64'),
                 io: url,

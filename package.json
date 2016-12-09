@@ -4,14 +4,13 @@
   "description": "collaborative gameboy emulation powered by socket.io – weplay.io",
   "dependencies": {
     "blob": "0.0.4",
-    "debug": "2.2.0",
     "express": "4.14.0",
     "fps": "0.0.3",
     "http": "0.0.0",
     "http-proxy": "^1.15.1",
     "jquery": "3.1.1",
     "mustache-express": "1.2.2",
-    "redis": "2.6.3",
+    "weplay-common": "iromu/weplay-common",
     "socket.io-client": "1.5.1"
   },
   "devDependencies": {
