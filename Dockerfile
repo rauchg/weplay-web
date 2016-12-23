@@ -12,7 +12,7 @@ RUN npm install
 RUN npm run build
 
 # Setup environment
-ENV NODE_ENV PRODUCTION
+ENV NODE_ENV production
 ENV WEPLAY_PORT 8080
 ENV WEPLAY_IO_PORT 8081
 ENV WEPLAY_IO_URL "http://$IO_PORT_8081_TCP_PORT"
