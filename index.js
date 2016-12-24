@@ -2,8 +2,7 @@ const mustache = require('mustache-express');
 const express = require('express');
 const app = express();
 
-const webpack = require('webpack');
-const webpackConfig = require('./webpack.config.dev');
+const env = process.env.NODE_ENV || 'development';
 const port = process.env.WEPLAY_PORT || 3000;
 
 const redis = require('weplay-common').redis();
@@ -18,7 +17,10 @@ logger.info(`listening on *:${port}`);
 app.engine('mustache', mustache());
 app.set('views', `${__dirname}/views`);
 
-if ('PRODUCTION' !== process.env.NODE_ENV) {
+if ('development' === env) {
+
+    const webpack = require('webpack');
+    const webpackConfig = require('./webpack.config.dev');
 
     const compiler = webpack(webpackConfig);
 
@@ -43,27 +45,29 @@ app.get('/', (req, res, next) => {
 
     redis.get('weplay:rom:default', (err, defaultHash) => {
         if (err) return next(err);
-        defaultHash = defaultHash.toString();
-        redis.get(`weplay:frame:${defaultHash}`, (err, image) => {
-            if (err) return next(err);
-            redis.get('weplay:connections-total', (err, count) => {
+        if (defaultHash) {
+            defaultHash = defaultHash.toString();
+            redis.get(`weplay:frame:${defaultHash}`, (err, image) => {
                 if (err) return next(err);
-                logger.info('io url config', {url: url});
-                res.render('index.mustache', {
-                    img: image ? image.toString('base64') : null,
-                    io: url,
-                    connections: count,
-                    defaultHash: defaultHash
+                redis.get('weplay:connections-total', (err, count) => {
+                    if (err) return next(err);
+                    logger.info('io url config', {url: url});
+                    res.render('index.mustache', {
+                        img: image ? image.toString('base64') : null,
+                        io: url,
+                        connections: count,
+                        defaultHash: defaultHash
+                    });
                 });
             });
-        });
+        }
     });
 });
 
 app.get('/screenshot.png', (req, res, next) => {
     redis.get('weplay:rom:default', (err, defaultHash) => {
         if (err) return next(err);
-        defaultHash = defaultHash.toString();
+        defaultHash = (defaultHash) ? defaultHash.toString() : 'DEFAULT';
         redis.get(`weplay:frame:${defaultHash}`, (err, image) => {
             if (err) return next(err);
             res.writeHead(200, {
