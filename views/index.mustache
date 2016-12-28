@@ -1,66 +1,70 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1,user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <meta property="og:title" content="weplay - collaborative play"/>
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content="website"/>
     <meta property="og:image" content="http://play.blew.es/screenshot.png"/>
     <meta property="og:url" content="http://play.blew.es/"/>
     <meta property="og:site-name" content="weplay"/>
     <title>weplay – collaborative play</title>
-    <link rel="stylesheet" href="/fonts.css" type="text/css" media="screen" charset="utf-8" />
-    <link rel="stylesheet" href="/app.css" type="text/css" media="screen" charset="utf-8" />
+    <link rel="stylesheet" href="/fonts.css" type="text/css" media="screen" charset="utf-8"/>
+    <link rel="stylesheet" href="/app.css" type="text/css" media="screen" charset="utf-8"/>
     <link rel="shortcut icon" href="/favicon.png" type="image/x-icon">
-  </head>
-  <body>
+</head>
+<body>
+<div id="app">
     <div id="game">
-      <img alt="game" src="data:image/png;base64,{{img}}" />
-      <i title="You can control the game with your keyboard" class="keyboard icon-keyboard-1">&nbsp;</i>
-      <span class="count-wrapper">
-        Online: <span class="count">{{connections}}</span>
-      </span>
-        <span class="move-wrapper">
-        <span class="moveemu">{{moveemu}}</span>
-      </span>
-      <table id="mov-keys" class="unjoined screen-keys">
-        <tr>
-          <td class="empty-cell"></td>
-          <td id="up">↑</td>
-          <td class="empty-cell"></td>
-        </tr>
-        <tr>
-          <td id="left">←</td>
-          <td id="down">↓</td>
-          <td id="right">→</td>
-        </tr>
-      </table>
-      <table id="keys" class="unjoined screen-keys">
-        <tr>
-          <td id="start">start</td>
-          <td id="select">select</td>
-        </tr>
-        <tr>
-          <td id="b" class="round">B</td>
-          <td id="a" class="round">A</td>
-        </tr>
+        <img alt="game" src="data:image/png;base64,{{img}}"/>
+        <i title="You can control the game with your keyboard" class="keyboard icon-keyboard-1">&nbsp;</i>
+          <span class="count-wrapper">
+            Online: <span class="count">{{connections}}</span>
+          </span>
+            <span class="move-wrapper">
+            <span class="moveemu">{{moveemu}}</span>
+          </span>
+        <table id="mov-keys" class="unjoined screen-keys">
+            <tr>
+                <td class="empty-cell"></td>
+                <td id="up">↑</td>
+                <td class="empty-cell"></td>
+            </tr>
+            <tr>
+                <td id="left">←</td>
+                <td id="down">↓</td>
+                <td id="right">→</td>
+            </tr>
+        </table>
+        <table id="keys" class="unjoined screen-keys">
+            <tr>
+                <td id="start">start</td>
+                <td id="select">select</td>
+            </tr>
+            <tr>
+                <td id="b" class="round">B</td>
+                <td id="a" class="round">A</td>
+            </tr>
         </table>
     </div>
     <div id="chat">
-      <div class="connecting messages">
-      </div>
-      <div class="input connecting">
-        <form action="">
-          <input type="text" disabled placeholder="connecting..." />
-        </form>
-      </div>
+        <div class="connecting messages">
+        </div>
+        <div class="input connecting">
+            <form action="">
+                <input type="text" disabled placeholder="connecting..."/>
+            </form>
+        </div>
     </div>
-
-    <script>
-      config = {};
-      config.io = "{{{io}}}";
-      config.defaultHash = "{{{defaultHash}}}";
-    </script>
-    <script src="/main.js"></script>
-  </body>
+</div>
+<script>
+    config = {};
+    config.io = "{{{io}}}";
+    config.connections = "{{{connections}}}";
+    config.img = "{{{img}}}";
+    config.defaultHash = "{{{defaultHash}}}";
+</script>
+<script src="/main.js"></script>
+</body>
 </html>

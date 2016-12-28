@@ -1,15 +1,15 @@
 var path = require('path');
 var webpack = require('webpack');
 module.exports = {
-    entry: [
-        './client/app'
-    ],
+    entry: {
+        app: './client/index.js'
+    },
     cache: true,
     debug: true,
     output: {
-        path: __dirname,
-        publicPath: 'main.js',
-        filename: './public/main.js'
+        path: path.join(__dirname, '/public/'),
+        publicPath: '/',
+        filename: 'main.js'
     },
     plugins: [
         new webpack.DefinePlugin({
@@ -29,10 +29,10 @@ module.exports = {
         loaders: [
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
+                exclude: /node_modules/,
                 loader: 'babel', // 'babel-loader' is also a valid name to reference
                 query: {
-                    presets: ['es2015']
+                    presets: ['es2015', 'react']
                 }
             }
         ]
