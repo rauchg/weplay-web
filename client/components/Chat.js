@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import bus from '../EventService';
 import $ from 'jquery';
+require("./chat.scss");
 
 export default class Chat extends Component {
 
@@ -9,9 +10,9 @@ export default class Chat extends Component {
         this.state = {value: ''};
 
         this.socket = props.socket;
-        this.joined;
+        this.joined = false;
 
-        this.nick;
+        this.nick = undefined;
         if (window.localStorage && localStorage.nick) {
             this.nick = localStorage.nick;
             bus.emit('nick', this.nick);
@@ -34,11 +35,6 @@ export default class Chat extends Component {
         this.socket.on('disconnect', this.onDisconnect.bind(this));
     }
 
-
-    componentWillUnmount() {
-
-    }
-
     handleChange(event) {
         this.setState({value: event.target.value});
     }
@@ -47,10 +43,11 @@ export default class Chat extends Component {
         event.preventDefault();
 
         const data = this.state.value;
-        if ('' === data) return;
+        if ('' === data) {
+            return;
+        }
 
         if (this.joined) {
-            //this.message(data, this.nick);
             this.socket.emit('message', data);
         } else {
             this.join(data);
@@ -178,8 +175,11 @@ export default class Chat extends Component {
         // Try-catch necessary because Safari might have locked setItem causing
         // exception
         try {
-            if (window.localStorage) localStorage.nick = data;
+            if (window.localStorage) {
+                localStorage.nick = data;
+            }
         } catch (e) {
+            console.error(e);
         }
         this.socket.emit('join', data);
         $('body').addClass('joined');

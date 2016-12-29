@@ -16,54 +16,10 @@
 </head>
 <body>
 <div id="app">
-    <div id="game">
-        <img alt="game" src="data:image/png;base64,{{img}}"/>
-        <i title="You can control the game with your keyboard" class="keyboard icon-keyboard-1">&nbsp;</i>
-          <span class="count-wrapper">
-            Online: <span class="count">{{connections}}</span>
-          </span>
-            <span class="move-wrapper">
-            <span class="moveemu">{{moveemu}}</span>
-          </span>
-        <table id="mov-keys" class="unjoined screen-keys">
-            <tr>
-                <td class="empty-cell"></td>
-                <td id="up">↑</td>
-                <td class="empty-cell"></td>
-            </tr>
-            <tr>
-                <td id="left">←</td>
-                <td id="down">↓</td>
-                <td id="right">→</td>
-            </tr>
-        </table>
-        <table id="keys" class="unjoined screen-keys">
-            <tr>
-                <td id="start">start</td>
-                <td id="select">select</td>
-            </tr>
-            <tr>
-                <td id="b" class="round">B</td>
-                <td id="a" class="round">A</td>
-            </tr>
-        </table>
-    </div>
-    <div id="chat">
-        <div class="connecting messages">
-        </div>
-        <div class="input connecting">
-            <form action="">
-                <input type="text" disabled placeholder="connecting..."/>
-            </form>
-        </div>
-    </div>
+    <img alt="game" class="placeholder" src="data:image/png;base64,{{img}}"/>
 </div>
 <script>
-    config = {};
-    config.io = "{{{io}}}";
-    config.connections = "{{{connections}}}";
-    config.img = "{{{img}}}";
-    config.defaultHash = "{{{defaultHash}}}";
+    config = {{{config}}};
 </script>
 <script src="/main.js"></script>
 </body>

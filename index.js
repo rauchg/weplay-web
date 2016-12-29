@@ -44,19 +44,28 @@ const url = process.env.WEPLAY_IO_URL || 'http://localhost:3001';
 app.get('/', (req, res, next) => {
 
     redis.get('weplay:rom:default', (err, defaultHash) => {
-        if (err) return next(err);
+        if (err) {
+            return next(err);
+        }
         if (defaultHash) {
             defaultHash = defaultHash.toString();
             redis.get(`weplay:frame:${defaultHash}`, (err, image) => {
-                if (err) return next(err);
+                if (err) {
+                    return next(err);
+                }
                 redis.get('weplay:connections-total', (err, count) => {
-                    if (err) return next(err);
+                    if (err) {
+                        return next(err);
+                    }
                     logger.info('io url config', {url: url});
                     res.render('index.mustache', {
                         img: image ? image.toString('base64') : null,
-                        io: url,
-                        connections: count,
-                        defaultHash: defaultHash
+                        config: JSON.stringify({
+                            img: image ? image.toString('base64') : null,
+                            io: url,
+                            connections: count.toString(),
+                            defaultHash: defaultHash
+                        })
                     });
                 });
             });
@@ -66,10 +75,14 @@ app.get('/', (req, res, next) => {
 
 app.get('/screenshot.png', (req, res, next) => {
     redis.get('weplay:rom:default', (err, defaultHash) => {
-        if (err) return next(err);
+        if (err) {
+            return next(err);
+        }
         defaultHash = (defaultHash) ? defaultHash.toString() : 'DEFAULT';
         redis.get(`weplay:frame:${defaultHash}`, (err, image) => {
-            if (err) return next(err);
+            if (err) {
+                return next(err);
+            }
             res.writeHead(200, {
                 'Content-Type': 'image/png',
                 'Content-Length': image.length

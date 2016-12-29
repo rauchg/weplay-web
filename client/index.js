@@ -6,6 +6,7 @@ import io from 'socket.io-client'
 const socket = io(config.io);
 const containerEl = document.getElementById('app');
 import bus from './EventService';
+require("./app.scss");
 
 
 

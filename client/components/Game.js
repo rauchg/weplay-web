@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import bus from '../EventService';
 import $ from 'jquery';
 
+require("./game.scss");
+var Loading = require('react-loading');
 const map = {
     37: 'left',
     39: 'right',
@@ -27,7 +29,12 @@ export default class Game extends Component {
     constructor(props) {
         super(props);
         this.socket = props.socket;
-        this.state = {connections: config.connections, moveemu: '', img: `data:image/png;base64,${config.img}`};
+        this.state = {
+            loading: true,
+            connections: config.connections,
+            moveemu: '',
+            img: `data:image/png;base64,${config.img}`
+        };
     }
 
     componentDidMount() {
@@ -82,14 +89,19 @@ export default class Game extends Component {
 
     onKeyDown(ev) {
         console.log('onKeyDown');
-        if (this.nick === undefined) return;
+        if (this.nick === undefined) {
+            return;
+        }
         const code = ev.keyCode;
-        if ($('body').hasClass('input_focus')) return;
+        if ($('body').hasClass('input_focus')) {
+            return;
+        }
         if (map[code]) {
             ev.preventDefault();
             this.socket.emit('move', map[code]);
         }
         if (command[code]) {
+            this.setState({loading: true});
             ev.preventDefault();
             this.socket.emit('command', command[code]);
         }
@@ -105,52 +117,57 @@ export default class Game extends Component {
     onFrame(frame) {
         const blob = new Blob([frame], {type: 'image/png'});
         const objectURL = URL.createObjectURL(blob);
-        this.setState({img: objectURL});
+        this.setState({img: objectURL, loading: false});
     }
 
     onConnection() {
         console.log('onConnection');
+        this.setState({loading: false});
     }
 
     render() {
-
-        return (
-            <div id="game">
-                {this.state.img ? <img alt="game" src={`${this.state.img}`}/> : <img alt="game"/>}
-                <i title="You can control the game with your keyboard" className="keyboard icon-keyboard-1">&nbsp;</i>
+        if (this.state.loading) {
+            return (<div id="game"><Loading type='cylon' color='#e3e3e3'/></div>);
+        }
+        else
+            return (
+                <div id="game">
+                    {this.state.img ? <img alt="game" src={`${this.state.img}`}/> : <img alt="game"/>}
+                    <i title="You can control the game with your keyboard"
+                       className="keyboard icon-keyboard-1">&nbsp;</i>
                 <span className="count-wrapper">
                   Online: <span className="count">{this.state.connections}</span>
                 </span>
                 <span className="move-wrapper">
                   <span className="moveemu">{this.state.moveemu}</span>
                 </span>
-                <table id="mov-keys" className="unjoined screen-keys">
-                    <tbody>
-                    <tr>
-                        <td className="empty-cell"/>
-                        <td id="up">↑</td>
-                        <td className="empty-cell"/>
-                    </tr>
-                    <tr>
-                        <td id="left">←</td>
-                        <td id="down">↓</td>
-                        <td id="right">→</td>
-                    </tr>
-                    </tbody>
-                </table>
-                <table id="keys" className="unjoined screen-keys">
-                    <tbody>
-                    <tr>
-                        <td id="start">start</td>
-                        <td id="select">select</td>
-                    </tr>
-                    <tr>
-                        <td id="b" className="round">B</td>
-                        <td id="a" className="round">A</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        );
+                    <table id="mov-keys" className="unjoined screen-keys">
+                        <tbody>
+                        <tr>
+                            <td className="empty-cell"/>
+                            <td id="up">↑</td>
+                            <td className="empty-cell"/>
+                        </tr>
+                        <tr>
+                            <td id="left">←</td>
+                            <td id="down">↓</td>
+                            <td id="right">→</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table id="keys" className="unjoined screen-keys">
+                        <tbody>
+                        <tr>
+                            <td id="start">start</td>
+                            <td id="select">select</td>
+                        </tr>
+                        <tr>
+                            <td id="b" className="round">B</td>
+                            <td id="a" className="round">A</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            );
     }
 }
